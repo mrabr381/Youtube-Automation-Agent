@@ -1,7 +1,12 @@
 import os
 from pathlib import Path
 import numpy as np
-from PIL import Image
+import PIL.Image
+
+# Pillow 10+ ANTIALIAS Compatibility Fix
+if not hasattr(PIL.Image, 'ANTIALIAS'):
+    PIL.Image.ANTIALIAS = getattr(PIL.Image, 'LANCZOS', getattr(PIL.Image.Resampling, 'LANCZOS', None))
+
 from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
 
 class VideoEditor:
@@ -10,6 +15,8 @@ class VideoEditor:
         self.width, self.height = resolution
 
     def apply_ken_burns(self, clip: ImageClip, duration: float, zoom_in: bool = True) -> ImageClip:
+        resample_filter = getattr(PIL.Image.Resampling, 'BILINEAR', PIL.Image.BILINEAR)
+
         def zoom_func(get_frame, t):
             frame = get_frame(t)
             h, w, _ = frame.shape
@@ -17,7 +24,7 @@ class VideoEditor:
             scale = 1.0 + 0.07 * prog if zoom_in else 1.07 - 0.07 * prog
 
             new_w, new_h = int(w * scale), int(h * scale)
-            img = Image.fromarray(frame).resize((new_w, new_h), Image.Resampling.BILINEAR)
+            img = PIL.Image.fromarray(frame).resize((new_w, new_h), resample_filter)
             arr = np.array(img)
             x1, y1 = (new_w - w) // 2, (new_h - h) // 2
             return arr[y1:y1 + h, x1:x1 + w]
@@ -44,6 +51,9 @@ class VideoEditor:
             if i > 0:
                 animated = animated.crossfadein(0.3)
             clips.append(animated)
+
+        if not clips:
+            raise RuntimeError("No valid clips could be assembled into video.")
 
         final_video = concatenate_videoclips(clips, method="compose")
         final_video.write_videofile(
