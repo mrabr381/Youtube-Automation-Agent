@@ -42,10 +42,11 @@ tab1, tab2, tab3 = st.tabs(["🚀 Control Panel", "⚙️ Settings & Configurati
 
 with tab1:
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Niche", config.get("channel_niche", "Technology"))
+    col1.metric("Niche", config.get("channel_niche", "Technology")[:15] + "...")
     col2.metric("Scheduled Time", config.get("schedule_time", "10:00"))
     col3.metric("Voice", config.get("voice_gender", "Male"))
-    col4.metric("Image Style", config.get("image_style", "Cinematic")[:18] + "...")
+    yt_connected = "Linked ✅" if TOKEN_FILE.exists() else "Not Linked ⚠️"
+    col4.metric("YouTube Channel", yt_connected)
 
     st.divider()
     if st.button("🚀 Generate & Publish Video Now", type="primary", disabled=pipeline.is_running):
@@ -65,6 +66,8 @@ with tab1:
                 upload_res = res.get("steps", {}).get("upload", {})
                 if upload_res.get("status") == "success":
                     st.success(f"🎬 **Uploaded to YouTube:** [Watch Video]({upload_res.get('video_url')})")
+                else:
+                    st.info(f"ℹ️ {upload_res.get('note', 'Video rendered and saved on server.')}")
             else:
                 st.error(f"Error: {res.get('error')}")
 
@@ -128,12 +131,37 @@ with tab2:
             st.rerun()
 
     st.divider()
-    st.subheader("🔐 YouTube API Credentials (`client_secret.json`)")
-    uploaded = st.file_uploader("Upload client_secret.json (from Google Cloud Console):", type=["json"])
-    if uploaded:
-        with open(CLIENT_SECRETS_FILE, "wb") as f:
-            f.write(uploaded.getbuffer())
-        st.success("✅ `client_secret.json` uploaded and saved!")
+    st.subheader("🔐 YouTube Channel Connection (`token.json`)")
+    
+    if TOKEN_FILE.exists():
+        st.success("✅ YouTube Channel Linked Successfully!")
+    else:
+        st.warning("⚠️ YouTube Channel not connected yet. Upload or paste your `token.json` below.")
+
+    col_up1, col_up2 = st.columns(2)
+    with col_up1:
+        st.markdown("**Option 1: Upload `token.json` File**")
+        uploaded_token = st.file_uploader("Upload token.json:", type=["json"], key="token_upload")
+        if uploaded_token:
+            with open(TOKEN_FILE, "wb") as f:
+                f.write(uploaded_token.getbuffer())
+            st.success("✅ `token.json` saved!")
+            st.rerun()
+
+    with col_up2:
+        st.markdown("**Option 2: Paste `token.json` Content Directly**")
+        with st.form("paste_token_form"):
+            token_text = st.text_area("Paste token.json content here:", height=100, placeholder='{"token": "...", "refresh_token": "...", ...}')
+            if st.form_submit_button("💾 Save Token Text"):
+                if token_text.strip():
+                    try:
+                        parsed = json.loads(token_text.strip())
+                        with open(TOKEN_FILE, "w", encoding="utf-8") as f:
+                            json.dump(parsed, f, indent=4)
+                        st.success("✅ `token.json` saved!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Invalid JSON: {e}")
 
 with tab3:
     st.subheader("📜 Generation History & Logs")
