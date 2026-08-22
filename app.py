@@ -1,19 +1,31 @@
 import sys
 import os
-import json
 from pathlib import Path
-import streamlit as st
 
 # Streamlit Cloud Path Fix
 ROOT_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+# Pillow 10+ Compatibility Fix
+import PIL.Image
+if not hasattr(PIL.Image, 'ANTIALIAS'):
+    PIL.Image.ANTIALIAS = getattr(PIL.Image, 'LANCZOS', getattr(PIL.Image.Resampling, 'LANCZOS', None))
+
+import json
+import time
+import streamlit as st
+
 from config import load_config, save_config, CLIENT_SECRETS_FILE, TOKEN_FILE
 from core.scheduler import AutomationPipeline, LOG_FILE
 from core.tts_engine import VOICE_MAP
 
-st.set_page_config(page_title="YouTube Automation Agent", page_icon="🎬", layout="wide")
+st.set_page_config(
+    page_title="AI YouTube Automation Agent",
+    page_icon="🎬",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 if "pipeline" not in st.session_state:
     p = AutomationPipeline()
@@ -29,10 +41,11 @@ st.caption("Autonomous Daily YouTube Video Production & Publishing Pipeline")
 tab1, tab2, tab3 = st.tabs(["🚀 Control Panel", "⚙️ Settings & Configuration", "📜 History & Logs"])
 
 with tab1:
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Niche", config.get("channel_niche"))
-    col2.metric("Scheduled Time", config.get("schedule_time"))
-    col3.metric("Voice", config.get("voice_gender"))
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Niche", config.get("channel_niche", "Technology"))
+    col2.metric("Scheduled Time", config.get("schedule_time", "10:00"))
+    col3.metric("Voice", config.get("voice_gender", "Male"))
+    col4.metric("Image Style", config.get("image_style", "Cinematic")[:18] + "...")
 
     st.divider()
     if st.button("🚀 Generate & Publish Video Now", type="primary", disabled=pipeline.is_running):
@@ -45,45 +58,90 @@ with tab1:
         with st.spinner("Processing full video pipeline..."):
             res = pipeline.run_daily_pipeline(progress_callback=callback)
             if res.get("status") == "completed":
-                st.success("✅ Video Generation Finished!")
+                st.success("✅ Video Generation Finished Successfully!")
                 if os.path.exists(res.get("video_path", "")):
                     st.video(res.get("video_path"))
+                
+                upload_res = res.get("steps", {}).get("upload", {})
+                if upload_res.get("status") == "success":
+                    st.success(f"🎬 **Uploaded to YouTube:** [Watch Video]({upload_res.get('video_url')})")
             else:
                 st.error(f"Error: {res.get('error')}")
 
 with tab2:
+    st.subheader("⚙️ Agent Settings & Customization")
     with st.form("cfg_form"):
-        gemini_key = st.text_input("Gemini API Key (Free):", value=config.get("gemini_api_key"), type="password")
-        niche = st.text_input("Channel Niche:", value=config.get("channel_niche"))
-        voice = st.selectbox("Voice:", list(VOICE_MAP.keys()), index=list(VOICE_MAP.keys()).index(config.get("voice_gender", "Male")))
-        time_run = st.text_input("Daily Run Time (HH:MM 24h):", value=config.get("schedule_time"))
-        privacy = st.selectbox("YouTube Privacy:", ["public", "unlisted", "private"])
-        auto = st.checkbox("Enable Daily Auto Run", value=config.get("auto_run_enabled"))
+        gemini_key = st.text_input("Gemini API Key (Google AI Studio - Free):", value=config.get("gemini_api_key", ""), type="password")
+        
+        col_a, col_b = st.columns(2)
+        with col_a:
+            niche = st.text_input("Channel Niche / Topic Domain:", value=config.get("channel_niche", "Artificial Intelligence & Future Tech"))
+            
+            voice_options = list(VOICE_MAP.keys())
+            current_voice = config.get("voice_gender", "Male")
+            v_idx = voice_options.index(current_voice) if current_voice in voice_options else 0
+            voice = st.selectbox("Voice-Over Gender & Accent:", voice_options, index=v_idx)
+            
+            time_run = st.text_input("Daily Run Time (HH:MM 24h format):", value=config.get("schedule_time", "10:00"))
 
-        if st.form_submit_button("💾 Save Settings"):
+        with col_b:
+            image_style_presets = [
+                "Cinematic, Photorealistic, 8k, Octane render, Dramatic lighting",
+                "Hyper-realistic National Geographic Documentary style, 4k",
+                "Dark Cyberpunk, Neon Glow, Highly Detailed Sci-Fi Art",
+                "Vintage Retro 1970s Film Grain, Moody Aesthetic",
+                "Studio Ghibli Anime style, Vibrant Watercolor scenery",
+                "3D Pixar Animation style, Clean Character Render",
+                "Dark Gothic Comic Book Illustration, High Contrast",
+                "Custom (Type below)"
+            ]
+            current_style = config.get("image_style", image_style_presets[0])
+            s_idx = image_style_presets.index(current_style) if current_style in image_style_presets else 0
+            
+            selected_preset = st.selectbox("Image Art Style Preset:", image_style_presets, index=s_idx)
+            
+            custom_style_input = st.text_input(
+                "Custom Image Style Prompt / Modifier:",
+                value=current_style if selected_preset == "Custom (Type below)" else "",
+                help="Type any custom aesthetic or details for FLUX image generator."
+            )
+            
+            final_style = custom_style_input.strip() if selected_preset == "Custom (Type below)" and custom_style_input.strip() else selected_preset
+
+            privacy = st.selectbox("YouTube Privacy Status:", ["public", "unlisted", "private"], index=["public", "unlisted", "private"].index(config.get("youtube_privacy_status", "public")))
+
+        auto = st.checkbox("Enable Daily Automated Scheduling", value=config.get("auto_run_enabled", True))
+
+        if st.form_submit_button("💾 Save Settings", type="primary"):
             save_config({
                 "gemini_api_key": gemini_key.strip(),
                 "channel_niche": niche.strip(),
                 "voice_gender": voice,
                 "voice_name": VOICE_MAP[voice],
+                "image_style": final_style,
                 "schedule_time": time_run.strip(),
                 "youtube_privacy_status": privacy,
                 "auto_run_enabled": auto
             })
             pipeline.start_scheduler()
-            st.success("Settings updated!")
+            st.success("✅ Configuration saved & Scheduler updated successfully!")
+            st.rerun()
 
     st.divider()
-    st.subheader("YouTube API (`client_secret.json`)")
-    uploaded = st.file_uploader("Upload client_secret.json", type=["json"])
+    st.subheader("🔐 YouTube API Credentials (`client_secret.json`)")
+    uploaded = st.file_uploader("Upload client_secret.json (from Google Cloud Console):", type=["json"])
     if uploaded:
         with open(CLIENT_SECRETS_FILE, "wb") as f:
             f.write(uploaded.getbuffer())
-        st.success("Credentials saved!")
+        st.success("✅ `client_secret.json` uploaded and saved!")
 
 with tab3:
+    st.subheader("📜 Generation History & Logs")
     if LOG_FILE.exists():
-        with open(LOG_FILE, "r") as f:
-            st.json(json.load(f))
+        try:
+            with open(LOG_FILE, "r") as f:
+                st.json(json.load(f))
+        except Exception as e:
+            st.error(f"Error loading logs: {e}")
     else:
         st.info("No runs recorded yet.")
