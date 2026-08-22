@@ -82,6 +82,7 @@ class AutomationPipeline:
             if progress_callback: progress_callback("Step 5/7: Assembling & Rendering Video...", 80)
             v_path = run_folder / f"{run_id}_final.mp4"
             final_video = VideoEditor().assemble_video(scenes, img_paths, audio_paths, v_path)
+            log_data["video_path"] = str(final_video)
 
             # 6. SEO
             if progress_callback: progress_callback("Step 6/7: Generating SEO Metadata...", 90)
@@ -90,22 +91,28 @@ class AutomationPipeline:
 
             # 7. Upload
             if progress_callback: progress_callback("Step 7/7: Uploading to YouTube...", 95)
-            if CLIENT_SECRETS_FILE.exists() or TOKEN_FILE.exists():
-                uploader = YouTubeUploader(CLIENT_SECRETS_FILE, TOKEN_FILE)
-                up_res = uploader.upload_video(
-                    Path(final_video),
-                    title=seo_data.get("primary_title", "Documentary"),
-                    description=seo_data.get("description", ""),
-                    tags=seo_data.get("tags", []),
-                    category_id=seo_data.get("category_id", "28"),
-                    privacy_status=cfg.get("youtube_privacy_status", "public")
-                )
+            if TOKEN_FILE.exists():
+                try:
+                    uploader = YouTubeUploader(CLIENT_SECRETS_FILE, TOKEN_FILE)
+                    up_res = uploader.upload_video(
+                        Path(final_video),
+                        title=seo_data.get("primary_title", "Documentary"),
+                        description=seo_data.get("description", ""),
+                        tags=seo_data.get("tags", []),
+                        category_id=seo_data.get("category_id", "28"),
+                        privacy_status=cfg.get("youtube_privacy_status", "public")
+                    )
+                except Exception as upload_err:
+                    up_res = {"status": "failed", "error": str(upload_err)}
             else:
-                up_res = {"status": "saved_locally", "note": "YouTube credentials not uploaded."}
+                up_res = {
+                    "status": "saved_locally",
+                    "note": "YouTube credentials (token.json) not uploaded. Video rendered and saved on server."
+                }
 
             log_data["steps"]["upload"] = up_res
             log_data["status"] = "completed"
-            log_data["video_path"] = str(final_video)
+
             if progress_callback: progress_callback("Complete!", 100)
             return log_data
 
