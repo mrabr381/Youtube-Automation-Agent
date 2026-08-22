@@ -5,11 +5,9 @@ from core.topic_researcher import get_best_model
 class SEOOptimizer:
     def __init__(self, api_key: str):
         self.api_key = api_key
-        if self.api_key:
-            genai.configure(api_key=self.api_key)
 
     def generate_metadata(self, topic_info: dict, script_summary: str, niche: str) -> dict:
-        model = get_best_model()
+        model = get_best_model(self.api_key)
         prompt = f"""
 You are a YouTube SEO Specialist.
 Generate metadata for this video:
@@ -32,9 +30,9 @@ Respond strictly in JSON:
             return json.loads(text)
         except Exception:
             return {
-                "primary_title": topic_info.get("topic_title", "Documentary Video"),
+                "primary_title": topic_info.get("topic_title", "Documentary Feature"),
                 "description": f"Exploring {niche} in depth.",
-                "tags": [niche, "documentary", "explained"],
+                "tags": [niche, "documentary", "explained", "breakdown"],
                 "hashtags": ["#YouTube", "#Trends"],
                 "category_id": "28"
             }
