@@ -1,5 +1,6 @@
 import json
 import google.generativeai as genai
+from core.topic_researcher import get_best_model
 
 class SEOOptimizer:
     def __init__(self, api_key: str):
@@ -8,7 +9,7 @@ class SEOOptimizer:
             genai.configure(api_key=self.api_key)
 
     def generate_metadata(self, topic_info: dict, script_summary: str, niche: str) -> dict:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = get_best_model()
         prompt = f"""
 You are a YouTube SEO Specialist.
 Generate metadata for this video:
