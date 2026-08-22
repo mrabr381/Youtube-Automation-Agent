@@ -1,5 +1,6 @@
 import json
 import google.generativeai as genai
+from core.topic_researcher import get_best_model
 
 class ScriptWriter:
     def __init__(self, api_key: str):
@@ -11,7 +12,7 @@ class ScriptWriter:
         if not self.api_key:
             raise ValueError("Gemini API Key is missing.")
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = get_best_model()
         prompt = f"""
 You are a documentary YouTube scriptwriter.
 Write an engaging, immersive 1500-1600 word script on:
