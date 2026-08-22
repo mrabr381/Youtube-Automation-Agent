@@ -1,29 +1,43 @@
 import json
 import google.generativeai as genai
 
-def get_best_model():
+def get_best_model(api_key: str):
+    if not api_key:
+        raise ValueError("Gemini API Key is missing. Please add your key in Settings.")
+    
+    genai.configure(api_key=api_key)
+    
     try:
-        available = [m.name.replace("models/", "") for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        for pref in ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-pro"]:
-            if pref in available:
-                return genai.GenerativeModel(pref)
-        if available:
-            return genai.GenerativeModel(available[0])
-    except Exception:
-        pass
-    return genai.GenerativeModel("gemini-1.5-flash-latest")
+        # User ki API key par jo models active hain unki list hasil karein
+        supported_models = [
+            m.name for m in genai.list_models() 
+            if 'generateContent' in m.supported_generation_methods
+        ]
+        
+        # Priority order check karein
+        for preferred in [
+            "models/gemini-2.0-flash",
+            "models/gemini-1.5-flash",
+            "models/gemini-1.5-flash-latest",
+            "models/gemini-1.5-pro",
+            "models/gemini-pro"
+        ]:
+            if preferred in supported_models:
+                return genai.GenerativeModel(preferred)
+        
+        if supported_models:
+            return genai.GenerativeModel(supported_models[0])
+    except Exception as e:
+        print(f"[Model Loader] Fallback note: {e}")
+
+    return genai.GenerativeModel("gemini-1.5-flash")
 
 class TopicResearcher:
     def __init__(self, api_key: str):
         self.api_key = api_key
-        if self.api_key:
-            genai.configure(api_key=self.api_key)
 
     def find_trending_topic(self, niche: str) -> dict:
-        if not self.api_key:
-            raise ValueError("Gemini API Key is missing. Please enter it in Settings.")
-
-        model = get_best_model()
+        model = get_best_model(self.api_key)
         prompt = f"""
 You are an expert YouTube strategist.
 Analyze the niche: "{niche}".
@@ -43,8 +57,8 @@ Respond strictly in JSON:
             return json.loads(text)
         except Exception:
             return {
-                "topic_title": f"The Evolution of {niche}",
+                "topic_title": f"The Untold Truth of {niche}",
                 "hook": f"What if everything you thought you knew about {niche} was completely wrong?",
-                "angle": "Investigative breakdown",
-                "key_takeaways": ["Core Shift", "Hidden Factors", "Future Impact"]
+                "angle": "Deep-dive documentary breakdown",
+                "key_takeaways": ["Core Shift", "Hidden Realities", "Future Impact"]
             }
