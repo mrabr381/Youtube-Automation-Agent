@@ -8,17 +8,16 @@ def get_best_model(api_key: str):
     genai.configure(api_key=api_key)
     
     try:
-        # User ki API key par jo models active hain unki list hasil karein
         supported_models = [
             m.name for m in genai.list_models() 
             if 'generateContent' in m.supported_generation_methods
         ]
         
-        # Priority order check karein
+        # New Google Gemini model priority
         for preferred in [
+            "models/gemini-3.6-flash",
             "models/gemini-2.0-flash",
             "models/gemini-1.5-flash",
-            "models/gemini-1.5-flash-latest",
             "models/gemini-1.5-pro",
             "models/gemini-pro"
         ]:
@@ -28,9 +27,9 @@ def get_best_model(api_key: str):
         if supported_models:
             return genai.GenerativeModel(supported_models[0])
     except Exception as e:
-        print(f"[Model Loader] Fallback note: {e}")
+        print(f"[Model Loader] Note: {e}")
 
-    return genai.GenerativeModel("gemini-1.5-flash")
+    return genai.GenerativeModel("gemini-3.6-flash")
 
 class TopicResearcher:
     def __init__(self, api_key: str):
