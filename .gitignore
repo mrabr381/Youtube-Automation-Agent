@@ -1,0 +1,18 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+
+# Environment secrets
+.env
+config.json
+
+# Google / YouTube OAuth secrets & tokens
+client_secret.json
+token.json
+
+# Local output folders (rendered videos & images)
+output/
+data/
