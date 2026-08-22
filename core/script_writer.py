@@ -5,14 +5,9 @@ from core.topic_researcher import get_best_model
 class ScriptWriter:
     def __init__(self, api_key: str):
         self.api_key = api_key
-        if self.api_key:
-            genai.configure(api_key=self.api_key)
 
     def generate_full_script(self, topic_info: dict, target_word_count: int = 1550, num_scenes: int = 110) -> dict:
-        if not self.api_key:
-            raise ValueError("Gemini API Key is missing.")
-
-        model = get_best_model()
+        model = get_best_model(self.api_key)
         prompt = f"""
 You are a documentary YouTube scriptwriter.
 Write an engaging, immersive 1500-1600 word script on:
