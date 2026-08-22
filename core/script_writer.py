@@ -6,25 +6,27 @@ class ScriptWriter:
     def __init__(self, api_key: str):
         self.api_key = api_key
 
-    def generate_full_script(self, topic_info: dict, target_word_count: int = 1550, num_scenes: int = 110) -> dict:
+    def generate_full_script(self, topic_info: dict, target_word_count: int = 1550, num_scenes: int = 40) -> dict:
         model = get_best_model(self.api_key)
         prompt = f"""
-You are a documentary YouTube scriptwriter.
-Write an engaging, immersive 1500-1600 word script on:
+You are a master documentary YouTube scriptwriter.
+Write an engaging, immersive 1500-1600 word narrative video essay script on:
 Title: {topic_info.get('topic_title')}
 Hook: {topic_info.get('hook')}
 
-Divide the entire narration into approximately {num_scenes} continuous sequential scenes.
-For each scene, provide the exact spoken narration text and a matching visual image prompt.
+Divide the entire 1500-word narration into exactly {num_scenes} continuous sequential scenes (each around 35-45 words).
+For each scene, provide:
+1. `narration`: The exact natural spoken sentence(s).
+2. `visual_prompt`: A detailed, descriptive 2D anime graphic novel / dark webtoon illustration prompt.
 
 Respond strictly in JSON format:
 {{
-    "full_title": "Final Video Title",
+    "full_title": "Final Catchy Video Title",
     "scenes": [
         {{
             "scene_number": 1,
-            "narration": "Spoken sentence...",
-            "visual_prompt": "Detailed cinematic visual scene description..."
+            "narration": "Exact spoken narration text...",
+            "visual_prompt": "Detailed dark anime graphic novel scene, atmospheric lighting..."
         }}
     ]
 }}
