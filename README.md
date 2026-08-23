@@ -64,15 +64,24 @@ Follow these steps to set up and run the YouTube Automation Agent locally:
 Clone this repository to your local computer and navigate into the project directory:
 ```bash
 git clone [https://github.com/your-username/youtube-automation-agent.git](https://github.com/your-username/youtube-automation-agent.git)
+```
+```bash
 cd youtube-automation-agent
-
-###2. Create and Activate Virtual Environment
+```
+### 2. Create and Activate Virtual Environment
 Set up an isolated Python virtual environment to manage dependencies cleanly:
 
-On macOS / Linux:
+ - **On macOS / Linux:**
+```bash
 python3 -m venv venv
+```
+```bash
 source venv/bin/activate
-
-On Windows (Command Prompt / PowerShell):
-python -m venv venv
+```
+ - **On Windows (Command Prompt / PowerShell):**
+ ```bash
+     python -m venv venv
+     ```
+```bash
 venv\Scripts\activate
+```
