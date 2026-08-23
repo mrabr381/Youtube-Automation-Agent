@@ -205,37 +205,6 @@ http://localhost:8501
 * **⚙️ Settings & Configuration:** Update your Gemini API key, change art styles, switch voices, modify schedules, and connect your YouTube token.
 * **📜 History & Logs:** View records of past automated runs, generated scripts, titles, and direct YouTube video URLs.
 
----
-
-## ☁️ Deploying on Streamlit Community Cloud (Free)
-
-1. Push your updated code to your GitHub repository:
-```bash
-git add .
-git commit -m "Deploy YouTube Automation Agent"
-git push origin main
-
-```
-
-
-2. Go to [share.streamlit.io](https://share.streamlit.io/) and sign in with your GitHub account.
-3. Click **"New App"**:
-* **Repository:** `your-username/youtube-automation-agent`
-* **Branch:** `main`
-* **Main file path:** `app.py`
-
-
-4. Click **Deploy**.
-5. Go to **Settings > Secrets** on Streamlit Cloud and configure your environment variables:
-```toml
-GEMINI_API_KEY = "your_gemini_api_key"
-ADMIN_PASSWORD = "your_secret_pin_to_lock_dashboard"
-CHANNEL_NICHE = "AITA Stories & Drama"
-VOICE_GENDER = "Female_US_Engaging"
-SCHEDULE_TIME = "10:00"
-
-```
-
 
 
 ---
