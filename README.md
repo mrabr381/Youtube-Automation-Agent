@@ -1,20 +1,24 @@
-# 🎬 YouTube Automation Agent (100% Free & Autonomous)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://youtube-automation-agent-1.streamlit.app/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An end-to-end autonomous YouTube content creation and daily publishing pipeline. This agent discovers trending topics in your niche, writes long-form scripts (1500–1600 words), generates voice-overs, creates 100–120 visual images, edits video with dynamic animations, optimizes SEO, and publishes directly to YouTube on a daily schedule.
+An end-to-end, 100% free, fully autonomous YouTube content generation and daily publishing engine. Powered by Google Gemini AI, Google Imagen 3, FLUX, Edge-TTS, and FFmpeg.
+
+🌐 **Live Web Dashboard:** [https://youtube-automation-agent-1.streamlit.app/](https://youtube-automation-agent-1.streamlit.app/)
 
 ---
 
 ## ✨ Features
 
-- **🔍 Automated Topic Discovery:** Uses Google Gemini API to analyze your niche and find high-CTR trending topics.
-- **✍️ Long-Form Scriptwriting:** Writes immersive 1500–1600 word documentary-style scripts divided into ~110 visual scenes.
-- **🎙️ Neural Text-to-Speech:** Generates natural human-like voice-overs (Male & Female voices) via Microsoft Edge Neural TTS.
-- **🎨 Batch Visual Generation:** Produces 100–120 high-definition 16:9 images per video matching your chosen art style (FLUX engine).
-- **🎞️ Dynamic Video Editing:** Syncs images to narration, applies Ken Burns pan/zoom motion effects, and adds crossfade transitions.
+- **🔍 Automated Topic Discovery:** Uses Google Gemini AI to analyze your niche daily and select viral, high-CTR topics.
+- **✍️ Long-Form Scriptwriting:** Writes comprehensive 1500–1600 word scripts divided into ~40 visual scenes (~18s per scene).
+- **🎙️ Studio-Quality Voice-Overs:** Generates natural male & female voice narration using Google AI Studio (Gemini 2.0 Flash Audio) and Microsoft Edge Neural TTS.
+- **🎨 High-Definition 1080p Visuals:** Produces anime graphic novel / dark webtoon / cinematic artwork using Google Imagen 3 and FLUX engines.
+- **🎞️ Dynamic Video Assembly:** Direct streaming FFmpeg engine applying crisp Ken Burns pan/zoom animations and seamless transitions.
 - **📈 Complete SEO Optimization:** Generates click-worthy titles, full descriptions with chapter timestamps, search tags, and hashtags.
-- **🚀 Automated YouTube Upload:** Connects via YouTube Data API v3 to upload scheduled videos with custom privacy settings.
-- **⏰ Daily Background Scheduler:** Set-and-forget automation that triggers every day at your specified time.
-- **💻 Streamlit Web UI:** Clean, intuitive dashboard to manage API keys, select styles, preview videos, and track logs.
+- **🚀 Automated YouTube Upload:** Uploads scheduled videos directly to your YouTube channel with custom privacy settings (Public, Unlisted, Private).
+- **⏰ Set-and-Forget Scheduler:** Background daily automation running autonomously at your specified time.
+- **💻 Clean Streamlit Web UI:** Intuitive control dashboard to customize styles, select voices, manage keys, and track live generation logs.
 
 ---
 
@@ -22,34 +26,53 @@ An end-to-end autonomous YouTube content creation and daily publishing pipeline.
 
 | Module | Engine / Tool | Pricing |
 | :--- | :--- | :--- |
-| **Topic & Script Engine** | Google Gemini 1.5 Flash API | **Free Tier** |
-| **Voice-Over (TTS)** | Edge Neural TTS (`edge-tts`) | **100% Free** (No API Key Required) |
-| **Visual Generator** | Pollinations / FLUX AI | **100% Free** (No API Key Required) |
-| **Video Processing** | Python (`MoviePy` + `FFmpeg`) | **100% Free** (Runs Locally) |
-| **SEO Generator** | Google Gemini API | **Free Tier** |
-| **YouTube Publishing** | YouTube Data API v3 | **Free** (10,000 daily quota units) |
-| **Control Dashboard** | Streamlit | **Open Source** |
+| **Topic & Script Engine** | Google Gemini API (AI Studio) | **Free Tier** |
+| **Voice-Over (TTS)** | Google AI Studio Audio & Edge-TTS | **100% Free** |
+| **Visual Art Generation** | Google Imagen 3 & FLUX Engine | **100% Free** |
+| **Video Processing** | Python + FFmpeg Streaming Engine | **100% Free** (Ultra-Low RAM) |
+| **YouTube Publishing** | YouTube Data API v3 (OAuth2) | **100% Free** (10,000 daily quota units) |
+| **Web Dashboard** | Streamlit Community Cloud | **100% Free** |
 
 ---
 
-## 📁 Repository Structure
+## 📋 Prerequisites & System Requirements
 
-```text
-youtube-automation-agent/
-├── app.py                     # Streamlit Web UI Dashboard
-├── config.py                  # Settings & Paths Manager
-├── requirements.txt           # Python Dependencies
-├── .env.example               # Template Environment Variables
-├── .gitignore                 # Git ignore rules
-├── README.md                  # Project Documentation
-├── core/
-│   ├── topic_researcher.py    # Trending Topic Research Module
-│   ├── script_writer.py       # 1500-Word Script Generator
-│   ├── tts_engine.py          # Edge-TTS Audio Generator
-│   ├── image_generator.py     # Batch Image Generator (FLUX Engine)
-│   ├── video_editor.py        # MoviePy & FFmpeg Video Assembly
-│   ├── seo_optimizer.py       # Title, Description, & Tag Generator
-│   ├── youtube_uploader.py    # YouTube Data API v3 OAuth Uploader
-│   └── scheduler.py           # Background Automation Scheduler
-├── data/                      # Run history and credentials
-└── output/                    # Local renders, audio, and images
+Before installing, ensure your environment meets the following requirements:
+
+1. **Python 3.8 or higher** installed on your system.
+2. **Git** installed on your machine.
+3. **FFmpeg** installed (Required for video assembly and Ken Burns animation):
+   - **macOS:**
+     ```bash
+     brew install ffmpeg
+     ```
+   - **Ubuntu / Debian Linux:**
+     ```bash
+     sudo apt update && sudo apt install -y ffmpeg
+     ```
+   - **Windows:**
+     Download FFmpeg from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/), extract it, and add the `bin` folder to your System PATH variables.
+4. **Google Gemini API Key** (Get a free key from [Google AI Studio](https://aistudio.google.com/)).
+
+---
+
+## 🚀 Complete Installation & Setup Guide
+
+Follow these steps to set up and run the YouTube Automation Agent locally:
+
+### 1. Clone the Repository
+Clone this repository to your local computer and navigate into the project directory:
+```bash
+git clone [https://github.com/your-username/youtube-automation-agent.git](https://github.com/your-username/youtube-automation-agent.git)
+cd youtube-automation-agent
+
+###2. Create and Activate Virtual Environment
+Set up an isolated Python virtual environment to manage dependencies cleanly:
+
+On macOS / Linux:
+python3 -m venv venv
+source venv/bin/activate
+
+On Windows (Command Prompt / PowerShell):
+python -m venv venv
+venv\Scripts\activate
