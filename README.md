@@ -64,8 +64,6 @@ Follow these steps to set up and run the YouTube Automation Agent locally:
 Clone this repository to your local computer and navigate into the project directory:
 ```bash
 git clone [https://github.com/your-username/youtube-automation-agent.git](https://github.com/your-username/youtube-automation-agent.git)
-```
-```bash
 cd youtube-automation-agent
 ```
 ### 2. Create and Activate Virtual Environment
@@ -74,14 +72,61 @@ Set up an isolated Python virtual environment to manage dependencies cleanly:
  - **On macOS / Linux:**
 ```bash
 python3 -m venv venv
-```
-```bash
 source venv/bin/activate
 ```
  - **On Windows (Command Prompt / PowerShell):**
- ```bash
-     python -m venv venv
-     ```
 ```bash
+python -m venv venv
 venv\Scripts\activate
 ```
+### 3. Install Required Dependencies
+Upgrade pip to the latest version and install all required Python libraries:
+```bash
+python3 -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 4. Configure Environment Variables
+Create your local environment configuration file from the provided template:
+-**On macOS / Linux:**
+```bash
+cp .env.example .env
+```
+-**On Windows:**
+```bash
+copy .env.example .env
+```
+-**Open the .env file in your text editor and configure your preferences:**
+# Gemini API Key (Get free from [https://aistudio.google.com/](https://aistudio.google.com/))
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Channel Niche & Topic Domain
+CHANNEL_NICHE=AITA Stories & Drama
+
+# Voice-Over Selection (Options: Female_US_Engaging, Male_US_Deep, Male, Female, Male_UK, Female_UK, Male_Urdu, Female_Urdu)
+VOICE_GENDER=Female_US_Engaging
+
+# Visual Art Style Modifier
+IMAGE_STYLE=detailed 2D anime graphic novel illustration, modern webtoon aesthetic, sharp inked line art, cinematic moody lighting, dramatic shadows, muted color palette, highly detailed background environment, serious tone, 8k resolution
+
+# Target Scenes & Schedule Time
+IMAGES_PER_VIDEO=40
+SCHEDULE_TIME=10:00
+AUTO_RUN_ENABLED=true
+YOUTUBE_PRIVACY_STATUS=public
+
+### 5. 🔐 One-Time YouTube Channel Authorization
+To enable the agent to automatically upload scheduled videos to your YouTube channel:
+
+-**Step A: Obtain Google Cloud OAuth Client ID**
+1. Open the Google Cloud Console.
+
+2. Create a new project (e.g. YouTube-Automation-Bot).
+
+3. Navigate to APIs & Services > Library, search for YouTube Data API v3, and click Enable.
+
+4. Go to APIs & Services > Credentials > Create Credentials > OAuth Client ID.
+
+5. Set the Application Type to Desktop App and name it YouTube Uploader.
+
+6. Download the generated JSON credentials file, rename it to client_secret.json, and place it in your local project root folder.
