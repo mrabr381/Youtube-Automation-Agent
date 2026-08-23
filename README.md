@@ -88,15 +88,16 @@ pip install -r requirements.txt
 
 ### 4. Configure Environment Variables
 Create your local environment configuration file from the provided template:
--**On macOS / Linux:**
+- **On macOS / Linux:**
 ```bash
 cp .env.example .env
 ```
--**On Windows:**
+- **On Windows:**
 ```bash
 copy .env.example .env
 ```
--**Open the .env file in your text editor and configure your preferences:**
+
+- **Open the .env file in your text editor and configure your preferences:**
 # Gemini API Key (Get free from [https://aistudio.google.com/](https://aistudio.google.com/))
 GEMINI_API_KEY=your_gemini_api_key_here
 
@@ -115,10 +116,11 @@ SCHEDULE_TIME=10:00
 AUTO_RUN_ENABLED=true
 YOUTUBE_PRIVACY_STATUS=public
 
+
 ### 5. 🔐 One-Time YouTube Channel Authorization
 To enable the agent to automatically upload scheduled videos to your YouTube channel:
 
--**Step A: Obtain Google Cloud OAuth Client ID**
+- **Step A: Obtain Google Cloud OAuth Client ID**
 1. Open the Google Cloud Console.
 
 2. Create a new project (e.g. YouTube-Automation-Bot).
