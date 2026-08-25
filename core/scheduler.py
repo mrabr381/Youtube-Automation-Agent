@@ -52,17 +52,17 @@ class AutomationPipeline:
             niche = cfg.get("channel_niche", "AITA Stories & Drama")
             voice_name = cfg.get("voice_gender", "Female_US_Engaging")
             image_style = cfg.get("image_style", "detailed 2D anime graphic novel illustration, modern webtoon aesthetic, sharp inked line art, cinematic moody lighting, dramatic shadows, muted color palette, highly detailed background environment, serious tone, 8k resolution")
-            num_images = int(cfg.get("images_per_video", 40))
+            num_scenes = int(cfg.get("images_per_video", 75))
             target_words = int(cfg.get("target_word_count", 1550))
 
-            # 1. Topic
+            # 1. Topic Research
             if progress_callback: progress_callback("Step 1/7: Researching Viral Topic with Gemini...", 10)
             topic_info = TopicResearcher(api_key).find_trending_topic(niche)
             log_data["steps"]["topic"] = topic_info
 
-            # 2. Script
-            if progress_callback: progress_callback(f"Step 2/7: Writing 1500+ Word Script ({num_images} Scenes)...", 25)
-            script_data = ScriptWriter(api_key).generate_full_script(topic_info, target_words, num_images)
+            # 2. Script Writing (75 Rapid Scenes ~6-8s per scene)
+            if progress_callback: progress_callback(f"Step 2/7: Writing 1500+ Word Script ({num_scenes} Rapid Scenes)...", 25)
+            script_data = ScriptWriter(api_key).generate_full_script(topic_info, target_words, num_scenes)
             scenes = script_data.get("scenes", [])
 
             # 3. Voice-Over
@@ -74,47 +74,59 @@ class AutomationPipeline:
                 tts.generate_scene_audio(s["narration"], str(p))
                 audio_paths.append(str(p))
 
-            # 4. Images
-            if progress_callback: progress_callback(f"Step 4/7: Generating {len(scenes)} High-Res Anime Graphic Novel Visuals...", 60)
+            # 4. High-Res Image Generation (75 Unique Visuals)
+            if progress_callback: progress_callback(f"Step 4/7: Generating {len(scenes)} Anime Graphic Novel Scenes...", 55)
             img_gen = ImageGenerator(api_key=api_key, default_style=image_style)
             img_paths = img_gen.batch_generate_images(scenes, images_dir, style=image_style)
 
-            # 5. Video Assembly
-            if progress_callback: progress_callback("Step 5/7: Rendering 1080p HD Video...", 80)
+            # 5. Video Assembly (1-Second Smooth Fade-In Transitions)
+            if progress_callback: progress_callback("Step 5/7: Rendering 1080p Video with 1-Second Fade-In Transitions...", 75)
             v_path = run_folder / f"{run_id}_final.mp4"
             final_video = VideoEditor().assemble_video(scenes, img_paths, audio_paths, v_path)
             log_data["video_path"] = str(final_video)
 
-            # 6. SEO
-            if progress_callback: progress_callback("Step 6/7: Generating YouTube SEO Metadata...", 90)
-            seo_data = SEOOptimizer(api_key).generate_metadata(topic_info, script_data["full_narration_text"], niche)
+            # 6. SEO & Thumbnail Generation
+            if progress_callback: progress_callback("Step 6/7: Generating SEO & Click-Worthy 1080p Thumbnail...", 88)
+            seo = SEOOptimizer(api_key=api_key)
+            seo_data = seo.generate_metadata(topic_info, script_data["full_narration_text"], niche)
             log_data["steps"]["seo"] = seo_data
 
-            # 7. Upload
-            if progress_callback: progress_callback("Step 7/7: Uploading to YouTube Channel...", 95)
+            # Generate Thumbnail
+            thumb_path = run_folder / "thumbnail.jpg"
+            img_gen.generate_thumbnail(
+                prompt=seo_data.get("thumbnail_prompt", topic_info.get("hook", "Drama story")),
+                text_overlay=seo_data.get("thumbnail_text", "THE TRUTH EXPOSED"),
+                output_path=thumb_path,
+                style=image_style
+            )
+            log_data["thumbnail_path"] = str(thumb_path)
+
+            # 7. Upload to YouTube (with Custom Thumbnail)
+            if progress_callback: progress_callback("Step 7/7: Uploading to YouTube & Attaching Thumbnail...", 95)
             if TOKEN_FILE.exists():
                 try:
                     uploader = YouTubeUploader(CLIENT_SECRETS_FILE, TOKEN_FILE)
                     up_res = uploader.upload_video(
                         Path(final_video),
-                        title=seo_data.get("primary_title", "Story Essay"),
+                        title=seo_data.get("primary_title", "Story Feature"),
                         description=seo_data.get("description", ""),
                         tags=seo_data.get("tags", []),
                         category_id=seo_data.get("category_id", "24"),
-                        privacy_status=cfg.get("youtube_privacy_status", "public")
+                        privacy_status=cfg.get("youtube_privacy_status", "public"),
+                        thumbnail_path=thumb_path if thumb_path.exists() else None
                     )
                 except Exception as upload_err:
                     up_res = {"status": "failed", "error": str(upload_err)}
             else:
                 up_res = {
                     "status": "saved_locally",
-                    "note": "token.json not uploaded. Video saved locally on server."
+                    "note": "token.json not uploaded. Video and thumbnail saved locally on server."
                 }
 
             log_data["steps"]["upload"] = up_res
             log_data["status"] = "completed"
 
-            if progress_callback: progress_callback("Complete!", 100)
+            if progress_callback: progress_callback("Complete! Video & Thumbnail Successfully Published.", 100)
             return log_data
 
         except Exception as e:
