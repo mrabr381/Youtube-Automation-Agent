@@ -62,7 +62,7 @@ Before installing, ensure your environment meets the following requirements:
 ### 1. Clone the Repository
 Clone this repository to your local computer and navigate into the project directory:
 ```bash
-git clone [https://github.com/your-username/youtube-automation-agent.git](https://github.com/your-username/youtube-automation-agent.git)
+git clone [https://github.com/mrabr381/Youtube-Automation-Agent.git](https://github.com/mrabr381/Youtube-Automation-Agent.git)
 cd youtube-automation-agent
 
 ```
