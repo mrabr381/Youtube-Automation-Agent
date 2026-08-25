@@ -6,27 +6,29 @@ class ScriptWriter:
     def __init__(self, api_key: str):
         self.api_key = api_key
 
-    def generate_full_script(self, topic_info: dict, target_word_count: int = 1550, num_scenes: int = 40) -> dict:
+    def generate_full_script(self, topic_info: dict, target_word_count: int = 1550, num_scenes: int = 75) -> dict:
         model = get_best_model(self.api_key)
         prompt = f"""
-You are a master documentary YouTube scriptwriter.
-Write an engaging, immersive 1500-1600 word narrative video essay script on:
+You are a master viral YouTube story writer and documentary producer.
+Write a gripping, suspenseful, emotionally intense video script on:
 Title: {topic_info.get('topic_title')}
 Hook: {topic_info.get('hook')}
 
-Divide the entire 1500-word narration into exactly {num_scenes} continuous sequential scenes (each around 35-45 words).
-For each scene, provide:
-1. `narration`: The exact natural spoken sentence(s).
-2. `visual_prompt`: A detailed, descriptive 2D anime graphic novel / dark webtoon illustration prompt.
+CRITICAL PACING REQUIREMENT:
+1. Divide the entire 1500-1600 words into exactly {num_scenes} sequential scene segments (each scene roughly 18-22 words, corresponding to 6-8 seconds of speech).
+2. For EVERY scene, provide:
+   - `scene_number`: 1 to {num_scenes}
+   - `narration`: The exact spoken dialogue or narration sentence.
+   - `visual_prompt`: A unique, detailed anime graphic novel / dark webtoon illustration description (describe the characters, action, emotional expression, environment, lighting).
 
-Respond strictly in JSON format:
+Format strictly as JSON:
 {{
-    "full_title": "Final Catchy Video Title",
+    "full_title": "Final Viral Video Title",
     "scenes": [
         {{
             "scene_number": 1,
-            "narration": "Exact spoken narration text...",
-            "visual_prompt": "Detailed dark anime graphic novel scene, atmospheric lighting..."
+            "narration": "First spoken line...",
+            "visual_prompt": "Dark anime graphic novel scene of..."
         }}
     ]
 }}
