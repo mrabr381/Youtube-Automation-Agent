@@ -9,26 +9,22 @@ class ScriptWriter:
     def generate_full_script(self, topic_info: dict, target_word_count: int = 1550, num_scenes: int = 75) -> dict:
         model = get_best_model(self.api_key)
         prompt = f"""
-You are a master viral YouTube story writer and documentary producer.
-Write a gripping, suspenseful, emotionally intense video script on:
-Title: {topic_info.get('topic_title')}
-Hook: {topic_info.get('hook')}
+You are a documentary producer. Write a script on: {topic_info.get('topic_title')}
 
-CRITICAL PACING REQUIREMENT:
-1. Divide the entire 1500-1600 words into exactly {num_scenes} sequential scene segments (each scene roughly 18-22 words, corresponding to 6-8 seconds of speech).
-2. For EVERY scene, provide:
-   - `scene_number`: 1 to {num_scenes}
-   - `narration`: The exact spoken dialogue or narration sentence.
-   - `visual_prompt`: A unique, detailed anime graphic novel / dark webtoon illustration description (describe the characters, action, emotional expression, environment, lighting).
+Divide the {target_word_count} words into exactly {num_scenes} sequential scenes.
+For EVERY scene, provide:
+- `scene_number`: 1 to {num_scenes}
+- `narration`: The exact spoken dialogue.
+- `visual_prompt`: A HIGHLY DETAILED prompt. If a character is visible, you MUST include: "close-up portrait, perfectly symmetrical face, highly detailed eyes, hyper-realistic facial features, flawless anatomy, sharp focus."
 
 Format strictly as JSON:
 {{
-    "full_title": "Final Viral Video Title",
+    "full_title": "Final Video Title",
     "scenes": [
         {{
             "scene_number": 1,
-            "narration": "First spoken line...",
-            "visual_prompt": "Dark anime graphic novel scene of..."
+            "narration": "...",
+            "visual_prompt": "..."
         }}
     ]
 }}
@@ -39,5 +35,4 @@ Format strictly as JSON:
         
         full_text = " ".join([s.get("narration", "") for s in data.get("scenes", [])])
         data["full_narration_text"] = full_text
-        data["actual_word_count"] = len(full_text.split())
         return data
