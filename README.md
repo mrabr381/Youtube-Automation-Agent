@@ -3,23 +3,23 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An end-to-end, 100% free, fully autonomous YouTube content generation and daily publishing engine. Powered by Google Gemini AI, Google Imagen 3, FLUX, Edge-TTS, and FFmpeg.
+An end-to-end, 100% free, fully autonomous YouTube content generation and daily publishing engine. Powered by Google Gemini AI, Pollinations.ai (free image API), Edge-TTS, and FFmpeg.
 
-🌐 **Live Web Dashboard:** [https://youtube-automation-agent-1.streamlit.app/](https://youtube-automation-agent-1.streamlit.app/)
+🌐 **Live Web Dashboard:** [https://youtube-automation-agent-1.streamlit.app/](https://youtube-automation-agent-1.streamlit.app/) (Note, checked 2026-11-20: this link currently redirects to a Streamlit login page, so it is not publicly viewable — deploy your own copy with the steps below if it asks you to log in.)
 
 ---
 
 ## ✨ Features
 
 - **🔍 Automated Topic Discovery:** Uses Google Gemini AI to analyze your niche daily and select viral, high-CTR topics.
-- **✍️ Long-Form Scriptwriting:** Writes comprehensive 1500–1600 word scripts divided into ~40 visual scenes (~18s per scene).
+- **✍️ Long-Form Scriptwriting:** Writes comprehensive 1500–1600 word scripts divided into 75 short visual scenes.
 - **🎙️ Studio-Quality Voice-Overs:** Generates natural male & female voice narration using Google AI Studio (Gemini 2.0 Flash Audio) and Microsoft Edge Neural TTS.
-- **🎨 High-Definition 1080p Visuals:** Produces anime graphic novel / dark webtoon / cinematic artwork using Google Imagen 3 and FLUX engines.
+- **🎨 High-Definition 1080p Visuals:** Produces anime graphic novel / dark webtoon / cinematic artwork using the free Pollinations.ai image API.
 - **🎞️ Dynamic Video Assembly:** Direct streaming FFmpeg engine applying crisp Ken Burns pan/zoom animations and seamless transitions.
 - **📈 Complete SEO Optimization:** Generates click-worthy titles, full descriptions with chapter timestamps, search tags, and hashtags.
 - **🚀 Automated YouTube Upload:** Uploads scheduled videos directly to your YouTube channel with custom privacy settings (Public, Unlisted, Private).
 - **⏰ Set-and-Forget Scheduler:** Background daily automation running autonomously at your specified time.
-- **💻 Clean Streamlit Web UI:** Password-protected control dashboard to customize styles, select voices, manage keys, and track live generation logs.
+- **💻 Clean Streamlit Web UI:** Control dashboard to customize styles, select voices, manage keys, and track live generation logs.
 
 ---
 
@@ -29,7 +29,7 @@ An end-to-end, 100% free, fully autonomous YouTube content generation and daily 
 | :--- | :--- | :--- |
 | **Topic & Script Engine** | Google Gemini API (AI Studio) | **Free Tier** |
 | **Voice-Over (TTS)** | Google AI Studio Audio & Edge-TTS | **100% Free** |
-| **Visual Art Generation** | Google Imagen 3 & FLUX Engine | **100% Free** |
+| **Visual Art Generation** | Pollinations.ai image API | **100% Free** (rate-limited) |
 | **Video Processing** | Python + FFmpeg Streaming Engine | **100% Free** (Ultra-Low RAM) |
 | **YouTube Publishing** | YouTube Data API v3 (OAuth2) | **100% Free** (10,000 daily quota units) |
 | **Web Dashboard** | Streamlit Community Cloud | **100% Free** |
@@ -63,7 +63,7 @@ Before installing, ensure your environment meets the following requirements:
 Clone this repository to your local computer and navigate into the project directory:
 ```bash
 git clone [https://github.com/mrabr381/Youtube-Automation-Agent.git](https://github.com/mrabr381/Youtube-Automation-Agent.git)
-cd youtube-automation-agent
+cd Youtube-Automation-Agent
 
 ```
 
@@ -224,9 +224,9 @@ youtube-automation-agent/
 ├── core/
 │   ├── __init__.py            # Python Package Initializer
 │   ├── topic_researcher.py    # Gemini Trending Topic Discovery Engine
-│   ├── script_writer.py       # 1500-Word Script Generator (40 Scenes)
+│   ├── script_writer.py       # 1500-Word Script Generator (75 Scenes)
 │   ├── tts_engine.py          # Google AI Studio & Edge-TTS Voice Generator
-│   ├── image_generator.py     # Google Imagen 3 & FLUX 1080p Visual Engine
+│   ├── image_generator.py     # Pollinations.ai 1080p Visual Engine
 │   ├── video_editor.py        # FFmpeg Low-RAM Video Assembly Engine
 │   ├── seo_optimizer.py       # YouTube SEO & Metadata Generator
 │   ├── youtube_uploader.py    # YouTube Data API v3 OAuth Uploader
