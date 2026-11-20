@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#111827"/>
+  <rect x="48" y="48" width="1104" height="534" rx="24" fill="none" stroke="#f59e0b" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="600" y="300" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="bold" fill="#ffffff" text-anchor="middle">YouTube Automation Agent</text>
+  <text x="600" y="372" font-family="Arial, Helvetica, sans-serif" font-size="32" fill="#f59e0b" text-anchor="middle">Turn one idea into a finished YouTube video, automatically.</text>
+</svg>
