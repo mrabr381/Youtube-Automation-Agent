@@ -35,6 +35,10 @@ if "pipeline" not in st.session_state:
 pipeline = st.session_state["pipeline"]
 config = load_config()
 
+st.sidebar.markdown("---")
+st.sidebar.link_button("⭐ Star on GitHub", "https://github.com/mrabr381/Youtube-Automation-Agent")
+st.sidebar.link_button("☕ Buy me a coffee", "https://www.buymeacoffee.com/muhammadabubakar")
+
 st.title("🎬 AI YouTube Automation Agent")
 st.caption("Autonomous Daily YouTube Video Production & Publishing Pipeline")
 
